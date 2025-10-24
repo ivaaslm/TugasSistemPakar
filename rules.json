@@ -1,1 +1,83 @@
-
+[
+  {
+    "id": "R01",
+    "penyakit_code": "P01",
+    "gejala": [
+      { "code": "G04", "mb": 0.4, "md": 0.0 },
+      { "code": "G05", "mb": 0.8, "md": 0.2 },
+      { "code": "G13", "mb": 0.8, "md": 0.2 }
+    ]
+  },
+  {
+    "id": "R02",
+    "penyakit_code": "P02",
+    "gejala": [
+      { "code": "G05", "mb": 0.4, "md": 0.2 },
+      { "code": "G13", "mb": 0.8, "md": 0.2 },
+      { "code": "G06", "mb": 0.8, "md": 0.0 }
+    ]
+  },
+  {
+    "id": "R03",
+    "penyakit_code": "P03",
+    "gejala": [
+      { "code": "G13", "mb": 0.6, "md": 0.2 },
+      { "code": "G07", "mb": 0.8, "md": 0.0 },
+      { "code": "G08", "mb": 0.4, "md": 0.2 }
+    ]
+  },
+  {
+    "id": "R04",
+    "penyakit_code": "P04",
+    "gejala": [
+      { "code": "G13", "mb": 0.6, "md": 0.2 },
+      { "code": "G08", "mb": 0.4, "md": 0.2 },
+      { "code": "G09", "mb": 0.4, "md": 0.0 }
+    ]
+  },
+  {
+    "id": "R05",
+    "penyakit_code": "P05",
+    "gejala": [
+      { "code": "G13", "mb": 0.4, "md": 0.2 },
+      { "code": "G09", "mb": 0.6, "md": 0.0 },
+      { "code": "G10", "mb": 0.6, "md": 0.2 }
+    ]
+  },
+  {
+    "id": "R06",
+    "penyakit_code": "P06",
+    "gejala": [
+      { "code": "G02", "mb": 0.4, "md": 0.0 },
+      { "code": "G13", "mb": 0.4, "md": 0.2 },
+      { "code": "G10", "mb": 0.6, "md": 0.2 },
+      { "code": "G11", "mb": 0.8, "md": 0.0 },
+      { "code": "G03", "mb": 0.4, "md": 0.0 },
+      { "code": "G01", "mb": 0.4, "md": 0.0 }
+    ]
+  },
+  {
+    "id": "R07",
+    "penyakit_code": "P07",
+    "gejala": [
+      { "code": "G02", "mb": 0.6, "md": 0.0 },
+      { "code": "G13", "mb": 0.4, "md": 0.2 },
+      { "code": "G11", "mb": 0.8, "md": 0.0 },
+      { "code": "G03", "mb": 0.4, "md": 0.0 },
+      { "code": "G01", "mb": 0.4, "md": 0.0 },
+      { "code": "G12", "mb": 0.4, "md": 0.2 }
+    ]
+  },
+  {
+    "id": "R08",
+    "penyakit_code": "P08",
+    "gejala": [
+      { "code": "G02", "mb": 0.4, "md": 0.0 },
+      { "code": "G11", "mb": 0.8, "md": 0.0 },
+      { "code": "G03", "mb": 0.4, "md": 0.0 },
+      { "code": "G01", "mb": 0.4, "md": 0.0 },
+      { "code": "G12", "mb": 0.4, "md": 0.2 },
+      { "code": "G14", "mb": 0.8, "md": 0.2 }
+    ]
+  }
+]

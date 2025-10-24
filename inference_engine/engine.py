@@ -11,7 +11,7 @@ def infer(facts, rules):
             conclusion = rule["then"]
             cf = rule["cf"]
             if conclusion in results:
-                # gabungkan jika sudah ada (aturan paralel)
+                # aturan perhitungan cf paralel
                 cf_old = results[conclusion]
                 cf = cf_old + cf * (1 - cf_old)
             results[conclusion] = cf

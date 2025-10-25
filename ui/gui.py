@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
-import sys
-import os
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from inference_engine import infer, load_rules, run_inference
 
 # --- KONSTANTA WARNA ---
 PINK_BG = "#FFC0CB"    # Warna Merah Jambu Muda untuk latar belakang

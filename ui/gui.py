@@ -3,16 +3,14 @@ from tkinter import ttk, messagebox, scrolledtext, font
 import sys
 import os
 
-# ------------------- KONSTANTA WARNA & STYLING -------------------
-ACCENT = "#E75480"        # aksen utama (merah jambu keunguan)
-ACCENT_LIGHT = "#FFB3C6"  # aksen lembut
-BG = "#FFF5F8"            # background aplikasi
-CARD = "#FFFFFF"          # warna kartu/tile
+ACCENT = "#E75480"        
+ACCENT_LIGHT = "#FFB3C6"
+BG = "#FFF5F8"
+CARD = "#FFFFFF"
 TEXT = "#222222"
 SHADOW = "#d9c5cf"
 BADGE = "#FF7BA9"
 
-# ------------------- IMPORT ENGINE (SAMA DENGAN SEBELUMNYA) -------------------
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 try:
     from inference_engine.engine import run_inference
@@ -23,7 +21,6 @@ except ImportError:
     def run_inference(gejala_list):
         return "SIMULASI: Kemungkinan P01 (80%). Ini hasil dummy."
 
-# ------------------- DATA GEJALA -------------------
 GEJALA_DATA = {
     "G04": "Tidak terdapat benjolan pada payudara",
     "G05": "Tidak terdapat metastasis pada kelenjar getah bening regional di ketiak/aksila",
@@ -34,7 +31,6 @@ GEJALA_DATA = {
     "G14": "Terdapat metastasis jauh"
 }
 
-# ------------------- UTIL: Hover untuk tombol -------------------
 def add_hover(btn, bg, hover_bg):
     def on_enter(e):
         try:
@@ -49,23 +45,18 @@ def add_hover(btn, bg, hover_bg):
     btn.bind("<Enter>", on_enter)
     btn.bind("<Leave>", on_leave)
 
-# ------------------- APLIKASI -------------------
 class ExpertSystemGUI:
     def __init__(self, master):
         self.master = master
-        master.title("Sistem Pakar Kanker Payudara — Visual + Info Interaktif")
+        master.title("Sistem Pakar Kanker Payudara")
         master.configure(bg=BG)
-        # fullscreen
         master.attributes('-fullscreen', True)
-        # allow exit fullscreen with Esc
         master.bind('<Escape>', lambda e: master.attributes('-fullscreen', False))
 
-        # Font
         self.title_font = font.Font(family="Helvetica", size=18, weight="bold")
         self.h2_font = font.Font(family="Helvetica", size=12, weight="bold")
         self.normal_font = font.Font(family="Helvetica", size=10)
 
-        # container stack
         self.container = tk.Frame(master, bg=BG)
         self.container.pack(fill=tk.BOTH, expand=True, padx=20, pady=18)
 
@@ -85,21 +76,18 @@ class ExpertSystemGUI:
         else:
             self.main_frame.lift()
 
-    # ------------------- Landing Page (DIROMBAK MENJADI VISUAL) -------------------
     def _build_landing(self):
         f = self.landing_frame
 
-        # Header gradient (Canvas)
         header_canv = tk.Canvas(f, height=120, highlightthickness=0, bg=BG)
         header_canv.pack(fill=tk.X, pady=(0,12))
         self._draw_gradient(header_canv, "#FFDFEA", ACCENT, f.winfo_screenwidth(), 120)
-        header_canv.create_text(30, 40, anchor="w", text="Sistem Konsultasi Kanker Payudara",
+        header_canv.create_text(30, 40, anchor="w", text="Aplikasi Konsultasi Kanker Payudara",
                                 font=self.title_font, fill=TEXT)
         header_canv.create_text(30, 80, anchor="w",
                                 text="Edukasi • Indikasi Awal • Arahan Tindak Lanjut",
                                 font=self.normal_font, fill=TEXT)
 
-        # MAIN CARD area: kiri visual + kanan ringkasan & CTA
         main_card = tk.Frame(f, bg=CARD, bd=0)
         main_card.pack(fill=tk.BOTH, expand=True, padx=12, pady=12)
 
@@ -108,8 +96,6 @@ class ExpertSystemGUI:
         left.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(24,12), pady=18)
         right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=(12,24), pady=18)
 
-        # ===== LEFT: Visual infographic + statistik cepat =====
-        # Top: statistik cards (3 kecil)
         stat_frame = tk.Frame(left, bg=CARD)
         stat_frame.pack(fill=tk.X, pady=(0,12))
         for i, (label, value, emoji) in enumerate([
@@ -122,14 +108,12 @@ class ExpertSystemGUI:
             tk.Label(card, text=emoji + "  " + label, bg=card["bg"], font=self.normal_font, fg=TEXT).pack(anchor="w", padx=10, pady=(8,0))
             tk.Label(card, text=value, bg=card["bg"], font=self.h2_font, fg=ACCENT if i==0 else TEXT).pack(anchor="w", padx=10, pady=(2,10))
 
-        # Middle: Infographic timeline of stadium (canvas)
         tf = tk.Frame(left, bg=CARD)
         tf.pack(fill=tk.BOTH, expand=True, pady=(6,0))
         tk.Label(tf, text="Visual Stadium (ringkasan)", font=self.h2_font, bg=CARD, fg=TEXT).pack(anchor="w", padx=6, pady=(6,2))
         canvas = tk.Canvas(tf, bg=CARD, height=180, highlightthickness=0)
         canvas.pack(fill=tk.X, padx=6, pady=6)
 
-        # draw a horizontal timeline with 4 nodes
         w = canvas.winfo_reqwidth() if canvas.winfo_reqwidth() > 200 else 900
         margin = 40
         nodes = 4
@@ -148,7 +132,6 @@ class ExpertSystemGUI:
             # label
             canvas.create_text(x, y+40, text=labels[i], font=self.normal_font, fill=TEXT)
 
-        # Bottom: risk factor chips (wrap)
         chips_frame = tk.Frame(left, bg=CARD)
         chips_frame.pack(fill=tk.X, pady=(12,6))
         tk.Label(chips_frame, text="Faktor Risiko:", bg=CARD, font=self.h2_font, fg=TEXT).pack(anchor="w", padx=6)
@@ -159,46 +142,26 @@ class ExpertSystemGUI:
             lb = tk.Label(chips_inner, text=r, bg=BADGE, fg="white", padx=8, pady=4, font=self.normal_font)
             lb.pack(side=tk.LEFT, padx=6, pady=4)
 
-        # ===== RIGHT: Ringkasan teks + indikator actionable =====
         tk.Label(right, text="Mengapa penting?", font=self.h2_font, bg=CARD, fg=TEXT).pack(anchor="w", pady=(6,0), padx=6)
         summary = ("Deteksi dini memungkinkan pengobatan yang lebih efektif. segera konsultasikan ke dokter.")
         tk.Label(right, text=summary, wraplength=320, justify="left", bg=CARD, fg=TEXT, font=self.normal_font).pack(anchor="w", padx=6, pady=(4,12))
 
-        # Actionable items -> Checklist (disabled)
         action_frame = tk.Frame(right, bg=CARD)
         action_frame.pack(fill=tk.X, padx=6, pady=(6,12))
         tk.Label(action_frame, text="Langkah Prioritas (informasi):", font=self.h2_font, bg=CARD, fg=TEXT).pack(anchor="w")
 
-        # checklist steps (disabled)
         steps = [
-            "SADARI - Pemeriksaan mandiri",
-            "Periksa ke fasilitas bila curiga",
-            "Mamografi/USG bila direkomendasikan"
+            "SADARI - Pemeriksaan mandiri secara rutin.",
+            "Periksa ke fasilitas kesehatan bila curiga atau menemukan benjolan.",
+            "Mamografi/USG bila direkomendasikan oleh dokter."
         ]
-        self.action_vars = {}
-        for name in steps:
-            var = tk.BooleanVar(value=False)
-            # checkbutton dibuat disabled sehingga hanya bersifat tampilan
-            cb = tk.Checkbutton(action_frame, text=name, variable=var,
-                                bg=CARD, anchor="w", justify="left", font=self.normal_font,
-                                state=tk.DISABLED)
-            cb.pack(fill=tk.X, pady=6, padx=6)
-            self.action_vars[name] = var
+        
+        for i, step_text in enumerate(steps, 1):
+            step_label = tk.Label(action_frame, text=f"{i}. {step_text}",
+                                  bg=CARD, anchor="w", justify="left", font=self.normal_font,
+                                  wraplength=300) # wraplength biar rapi
+            step_label.pack(fill=tk.X, pady=2, padx=(12, 6)) # indent sedikit
 
-        # status indikator (tetap menampilkan 0/X selesai karena disabled)
-        status_row = tk.Frame(action_frame, bg=CARD)
-        status_row.pack(fill=tk.X, pady=(8,0), padx=6)
-        total = len(self.action_vars)
-        self.check_status_label = tk.Label(status_row, text=f"0/{total} selesai (read-only)", bg=CARD, font=self.normal_font)
-        self.check_status_label.pack(side=tk.LEFT)
-
-        # tombol reset dinonaktifkan karena checklist read-only
-        reset_chk_btn = tk.Button(status_row, text="Reset Checklist", state=tk.DISABLED,
-                                  bg="lightgrey", fg=TEXT, bd=0, padx=8, pady=6)
-        reset_chk_btn.pack(side=tk.RIGHT)
-        add_hover(reset_chk_btn, "lightgrey", "#efefef")
-
-        # CTA buttons
         cta_frame = tk.Frame(right, bg=CARD)
         cta_frame.pack(fill=tk.X, pady=(8,0), padx=6)
         start_btn = tk.Button(cta_frame, text="→ Mulai Diagnosa", command=lambda: self.show_frame("main"),
@@ -206,64 +169,38 @@ class ExpertSystemGUI:
         start_btn.pack(fill=tk.X, pady=(0,8))
         add_hover(start_btn, ACCENT, ACCENT_LIGHT)
 
-        learn_btn = tk.Button(cta_frame, text="Simpan Panduan Singkat (.txt)", command=self._save_helper_text,
-                               bg="#f6f0f7", fg=TEXT, font=self.normal_font, bd=0, padx=12, pady=8)
-        learn_btn.pack(fill=tk.X)
-        add_hover(learn_btn, "#f6f0f7", "#eee6f0")
-
-        # ===== FAQ accordion (collapsible) di bagian bawah seluruh card =====
-        faq_card = tk.Frame(f, bg=CARD)
-        faq_card.pack(fill=tk.X, padx=12, pady=(6,12))
-        tk.Label(faq_card, text="FAQ Singkat — Klik untuk buka/tutup", font=self.h2_font, bg=CARD, fg=TEXT).pack(anchor="w", padx=8, pady=(8,4))
-        faqs = [
-            ("Apakah aplikasi ini pengganti dokter?", "Tidak. Aplikasi hanya memberikan indikasi awal. Konsultasikan ke dokter."),
-            ("Apa yang harus dilakukan bila menemukan benjolan?", "Segera periksa ke fasilitas kesehatan untuk evaluasi lanjutan."),
-            ("Seberapa sering SADARI?", "Idealnya setiap bulan, terutama setelah haid selesai.")
-        ]
-        for q, a in faqs:
-            self._create_accordion(faq_card, q, a)
-
-    # ------------------- Main (Bento dengan visual) -------------------
     def _build_main(self):
         f = self.main_frame
 
         # Top bar
         top = tk.Frame(f, bg=BG)
         top.pack(fill=tk.X, pady=(0,8))
-        tk.Label(top, text="Aplikasi Konsultasi — Bentō", font=self.title_font, bg=BG, fg=TEXT).pack(side=tk.LEFT, padx=4)
+        tk.Label(top, text="Aplikasi Konsultasi Kanker Payudara", font=self.title_font, bg=BG, fg=TEXT).pack(side=tk.LEFT, padx=4)
         back = tk.Button(top, text="← Kembali", command=lambda: self.show_frame("landing"),
                          bg=CARD, fg=TEXT, bd=0, padx=8, pady=6)
         back.pack(side=tk.RIGHT, padx=6)
         add_hover(back, CARD, "#f6f6f6")
 
-        # Grid 2x2 area
         grid = tk.Frame(f, bg=BG)
         grid.pack(fill=tk.BOTH, expand=True, padx=6, pady=6)
 
-        # Make 2 columns equal
         grid.columnconfigure(0, weight=1)
         grid.columnconfigure(1, weight=1)
         grid.rowconfigure(0, weight=1)
         grid.rowconfigure(1, weight=1)
 
-        # TILE helper: create shadow + tile
         def create_tile(r, c, title, accent_icon="📌"):
-            # shadow
             sh = tk.Frame(grid, bg=SHADOW)
             sh.grid(row=r, column=c, sticky="nsew", padx=10, pady=10)
-            # tile above
             tile = tk.Frame(grid, bg=CARD, bd=0)
             tile.grid(row=r, column=c, sticky="nsew", padx=(8,8), pady=(8,8))
-            # header
             hdr = tk.Frame(tile, bg=CARD)
             hdr.pack(fill=tk.X, padx=10, pady=8)
             tk.Label(hdr, text=f"{accent_icon}  {title}", font=self.h2_font, bg=CARD, fg=ACCENT).pack(anchor="w")
             return tile
 
-        # Tile 1: Gejala (top-left)
         t1 = create_tile(0, 0, "Pilih Gejala", accent_icon="🩺")
         self.gejala_vars = {code: tk.BooleanVar() for code in GEJALA_DATA.keys()}
-        # scrollable frame for many checkbox (canvas+frame)
         canvas1 = tk.Canvas(t1, bg=CARD, highlightthickness=0)
         scrollbar1 = ttk.Scrollbar(t1, orient="vertical", command=canvas1.yview)
         chk_holder = tk.Frame(canvas1, bg=CARD)
@@ -271,14 +208,12 @@ class ExpertSystemGUI:
         canvas1.create_window((0, 0), window=chk_holder, anchor="nw")
         canvas1.configure(yscrollcommand=scrollbar1.set, height=220)
         canvas1.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(8,2), pady=6)
-        scrollbar1.pack(side=tk.RIGHT, fill=tk.Y, padx=(0,6), pady=6)
 
         for code, desc in GEJALA_DATA.items():
             cb = tk.Checkbutton(chk_holder, text=f"[{code}] {desc}", variable=self.gejala_vars[code],
                                 bg=CARD, anchor="w", justify="left", font=self.normal_font)
             cb.pack(fill=tk.X, padx=6, pady=3)
 
-        # Tile 2: Stadium (top-right)
         t2 = create_tile(0, 1, "Ringkasan Stadium", accent_icon="📊")
         stadium_text = ("Stadium 0: Terlokalisir\n\n"
                         "Stadium I: Tumor kecil (≤2 cm)\n\n"
@@ -286,7 +221,6 @@ class ExpertSystemGUI:
                         "Stadium IV: Metastasis jauh")
         tk.Label(t2, text=stadium_text, bg=CARD, fg=TEXT, justify="left", font=self.normal_font, wraplength=360).pack(fill=tk.BOTH, expand=True, padx=12, pady=6)
 
-        # Tile 3: Tips (bottom-left)
         t3 = create_tile(1, 0, "Tips & Tindakan Awal", accent_icon="💡")
         tips = ("• Lakukan SADARI setiap bulan.\n"
                 "• Bila menemukan perubahan, segera konsultasikan.\n"
@@ -294,13 +228,11 @@ class ExpertSystemGUI:
                 "Catatan: Aplikasi hanya sebagai indikasi awal.")
         tk.Label(t3, text=tips, bg=CARD, fg=TEXT, justify="left", font=self.normal_font, wraplength=420).pack(fill=tk.BOTH, expand=True, padx=12, pady=6)
 
-        # Tile 4: Hasil & aksi (bottom-right)
         t4 = create_tile(1, 1, "Hasil Diagnosa", accent_icon="🧾")
         self.result_label = tk.Label(t4, text="Tekan tombol di bawah untuk memproses diagnosa.",
                                      bg=CARD, fg=ACCENT, font=self.normal_font, wraplength=360, justify="left")
         self.result_label.pack(fill=tk.BOTH, expand=True, padx=12, pady=8)
 
-        # Buttons area
         btnf = tk.Frame(t4, bg=CARD)
         btnf.pack(fill=tk.X, padx=10, pady=(0,12))
         self.process_btn = tk.Button(btnf, text="PROSES DIAGNOSA", command=self.proses_diagnosa,
@@ -314,9 +246,7 @@ class ExpertSystemGUI:
         reset_btn.pack(side=tk.LEFT)
         add_hover(reset_btn, "lightgrey", "#efefef")
 
-    # gradient helper (horizontal)
     def _draw_gradient(self, canvas, color1, color2, w, h):
-        # draw vertical stripes to simulate gradient
         r1, g1, b1 = self._hex_to_rgb(color1)
         r2, g2, b2 = self._hex_to_rgb(color2)
         steps = 80
@@ -334,7 +264,6 @@ class ExpertSystemGUI:
         return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
 
     def _create_accordion(self, parent, title, content):
-        """Simple accordion: klik tombol untuk toggle show/hide content."""
         header = tk.Button(parent, text="▶ " + title, anchor="w", bd=0, bg=CARD, font=self.normal_font)
         header.pack(fill=tk.X, padx=8, pady=(4,0))
         body = tk.Frame(parent, bg="#fbf7fb")
@@ -380,23 +309,11 @@ class ExpertSystemGUI:
             return
         try:
             hasil = run_inference(gejala_dipilih)
-            # tampilkan hasil dengan format rapi
             self.result_label.config(text=f"Hasil:\n{hasil}", fg=TEXT, justify="left")
         except Exception as e:
             messagebox.showerror("Error", f"Ada kesalahan saat memproses: {e}")
             self.result_label.config(text="ERROR PADA LOGIKA INFERENSI", fg="red")
 
-    def save_result(self):
-        # simpan isi result_label ke file txt
-        content = self.result_label.cget("text")
-        try:
-            with open("hasil_diagnosa.txt", "w", encoding="utf-8") as f:
-                f.write(content)
-            messagebox.showinfo("Sukses", "Hasil disimpan ke file 'hasil_diagnosa.txt'.")
-        except Exception as e:
-            messagebox.showerror("Gagal Simpan", f"Tidak dapat menyimpan: {e}")
-
-# ------------------- RUN -------------------
 if __name__ == "__main__":
     root = tk.Tk()
     app = ExpertSystemGUI(root)

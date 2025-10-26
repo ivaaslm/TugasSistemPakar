@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox, scrolledtext, font
 import sys
 import os
 
-ACCENT = "#E75480"        
+ACCENT = "#E75480"
 ACCENT_LIGHT = "#FFB3C6"
 BG = "#FFF5F8"
 CARD = "#FFFFFF"
@@ -22,12 +22,19 @@ except ImportError:
         return "SIMULASI: Kemungkinan P01 (80%). Ini hasil dummy."
 
 GEJALA_DATA = {
+    "G01": "Kulit payudara berwarna kemerahan",
+    "G02": "Terdapat benjolan pada payudara",
+    "G03": "Payudara mengoreng atau menjadi borok (luka-luka)",
     "G04": "Tidak terdapat benjolan pada payudara",
     "G05": "Tidak terdapat metastasis pada kelenjar getah bening regional di ketiak/aksila",
     "G06": "Terdapat benjolan pada payudara berukuran diameter 2 cm atau kurang",
     "G07": "Terdapat benjolan pada payudara berukuran diameter 2 cm hingga 5 cm",
+    "G08": "Terdapat metastasis ke kelenjar getah bening regional di ketiak/aksila yang dapat digerakkan ",
+    "G09": "Terdapat benjolan pada payudara berukuran diameter lebih dari 5 cm",
+    "G10": "Terdapat metastasis ke kelenjar getah bening regional di ketiak/aksila yang sulit digerakkan",
+    "G11": "Terdapat benjolan pada payudara ukuran berapa saja",
+    "G12": "Terdapat metastasis ke kelenjar getah bening di atas tulang selangka/di dekat tulang sternum",
     "G13": "Tidak terdapat metastasis jauh",
-    "G01": "Kulit payudara berwarna kemerahan",
     "G14": "Terdapat metastasis jauh"
 }
 
@@ -48,7 +55,7 @@ def add_hover(btn, bg, hover_bg):
 class ExpertSystemGUI:
     def __init__(self, master):
         self.master = master
-        master.title("Sistem Pakar Kanker Payudara")
+        master.title("Sistem Pakar Diagnosa Kanker Payudara")
         master.configure(bg=BG)
         master.attributes('-fullscreen', True)
         master.bind('<Escape>', lambda e: master.attributes('-fullscreen', False))
@@ -56,6 +63,7 @@ class ExpertSystemGUI:
         self.title_font = font.Font(family="Helvetica", size=18, weight="bold")
         self.h2_font = font.Font(family="Helvetica", size=12, weight="bold")
         self.normal_font = font.Font(family="Helvetica", size=10)
+        self.chk_font = font.Font(family="Helvetica", size=11)
 
         self.container = tk.Frame(master, bg=BG)
         self.container.pack(fill=tk.BOTH, expand=True, padx=20, pady=18)
@@ -82,7 +90,7 @@ class ExpertSystemGUI:
         header_canv = tk.Canvas(f, height=120, highlightthickness=0, bg=BG)
         header_canv.pack(fill=tk.X, pady=(0,12))
         self._draw_gradient(header_canv, "#FFDFEA", ACCENT, f.winfo_screenwidth(), 120)
-        header_canv.create_text(30, 40, anchor="w", text="Aplikasi Konsultasi Kanker Payudara",
+        header_canv.create_text(30, 40, anchor="w", text="Sistem Pakar Diagnosa Kanker Payudara",
                                 font=self.title_font, fill=TEXT)
         header_canv.create_text(30, 80, anchor="w",
                                 text="Edukasi • Indikasi Awal • Arahan Tindak Lanjut",
@@ -123,13 +131,10 @@ class ExpertSystemGUI:
         labels = ["Stadium 0\n(Terlokalisir)", "Stadium I\n(≤2 cm)", "Stadium II-III\n(Regional)", "Stadium IV\n(Metastasis)"]
         for i in range(nodes):
             x = margin + i*step
-            # line
             if i < nodes-1:
                 canvas.create_line(x, y, x+step, y, width=6, fill="#f0d6df", capstyle="round")
-            # node circle
             canvas.create_oval(x-18, y-18, x+18, y+18, fill=colors[i], outline="")
             canvas.create_text(x, y, text=str(i), font=self.h2_font, fill="white")
-            # label
             canvas.create_text(x, y+40, text=labels[i], font=self.normal_font, fill=TEXT)
 
         chips_frame = tk.Frame(left, bg=CARD)
@@ -155,12 +160,12 @@ class ExpertSystemGUI:
             "Periksa ke fasilitas kesehatan bila curiga atau menemukan benjolan.",
             "Mamografi/USG bila direkomendasikan oleh dokter."
         ]
-        
+
         for i, step_text in enumerate(steps, 1):
             step_label = tk.Label(action_frame, text=f"{i}. {step_text}",
                                   bg=CARD, anchor="w", justify="left", font=self.normal_font,
-                                  wraplength=300) # wraplength biar rapi
-            step_label.pack(fill=tk.X, pady=2, padx=(12, 6)) # indent sedikit
+                                  wraplength=300)
+            step_label.pack(fill=tk.X, pady=2, padx=(12, 6))
 
         cta_frame = tk.Frame(right, bg=CARD)
         cta_frame.pack(fill=tk.X, pady=(8,0), padx=6)
@@ -172,10 +177,9 @@ class ExpertSystemGUI:
     def _build_main(self):
         f = self.main_frame
 
-        # Top bar
         top = tk.Frame(f, bg=BG)
         top.pack(fill=tk.X, pady=(0,8))
-        tk.Label(top, text="Aplikasi Konsultasi Kanker Payudara", font=self.title_font, bg=BG, fg=TEXT).pack(side=tk.LEFT, padx=4)
+        tk.Label(top, text="Sistem Pakar Diagnosa Kanker Payudara", font=self.title_font, bg=BG, fg=TEXT).pack(side=tk.LEFT, padx=4)
         back = tk.Button(top, text="← Kembali", command=lambda: self.show_frame("landing"),
                          bg=CARD, fg=TEXT, bd=0, padx=8, pady=6)
         back.pack(side=tk.RIGHT, padx=6)
@@ -201,18 +205,85 @@ class ExpertSystemGUI:
 
         t1 = create_tile(0, 0, "Pilih Gejala", accent_icon="🩺")
         self.gejala_vars = {code: tk.BooleanVar() for code in GEJALA_DATA.keys()}
-        canvas1 = tk.Canvas(t1, bg=CARD, highlightthickness=0)
-        scrollbar1 = ttk.Scrollbar(t1, orient="vertical", command=canvas1.yview)
-        chk_holder = tk.Frame(canvas1, bg=CARD)
-        chk_holder.bind("<Configure>", lambda e: canvas1.configure(scrollregion=canvas1.bbox("all")))
-        canvas1.create_window((0, 0), window=chk_holder, anchor="nw")
-        canvas1.configure(yscrollcommand=scrollbar1.set, height=220)
-        canvas1.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(8,2), pady=6)
 
+        canvas1 = tk.Canvas(t1, bg=CARD, highlightthickness=0)
+        v_scrollbar = ttk.Scrollbar(t1, orient="vertical", command=canvas1.yview)
+        h_scrollbar = ttk.Scrollbar(t1, orient="horizontal", command=canvas1.xview)
+
+        chk_holder = tk.Frame(canvas1, bg=CARD)
+        canvas_window = canvas1.create_window((0, 0), window=chk_holder, anchor="nw")
+
+        def _on_chk_config(event):
+            canvas1.configure(scrollregion=canvas1.bbox("all"))
+            try:
+                canvas1.itemconfig(canvas_window, width=chk_holder.winfo_reqwidth())
+            except:
+                pass
+
+        chk_holder.bind("<Configure>", _on_chk_config)
+        canvas1.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set, height=220)
+
+        canvas1.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(8,2), pady=6)
+        v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y, padx=(0,6), pady=6)
+        h_scrollbar.pack(side=tk.BOTTOM, fill=tk.X, padx=(8,2), pady=(0,6))
+
+        # checkbox font uses self.normal_font
         for code, desc in GEJALA_DATA.items():
             cb = tk.Checkbutton(chk_holder, text=f"[{code}] {desc}", variable=self.gejala_vars[code],
-                                bg=CARD, anchor="w", justify="left", font=self.normal_font)
-            cb.pack(fill=tk.X, padx=6, pady=3)
+                                bg=CARD, anchor="w", justify="left", font=self.normal_font,
+                                fg=TEXT, activeforeground=ACCENT, selectcolor=ACCENT_LIGHT)
+            cb.pack(anchor="w", padx=6, pady=4)
+
+        def _get_delta(event):
+            d = 0
+            if hasattr(event, "delta"):
+                try:
+                    d = int(event.delta / 120)
+                except:
+                    try:
+                        d = int(event.delta)
+                    except:
+                        d = 0
+            return d
+
+        def _on_mousewheel(event):
+            delta = _get_delta(event)
+            canvas1.yview_scroll(-delta, "units")
+
+        def _on_button4(event):
+            canvas1.yview_scroll(-1, "units")
+        def _on_button5(event):
+            canvas1.yview_scroll(1, "units")
+        def _on_button6(event):
+            canvas1.xview_scroll(-1, "units")
+        def _on_button7(event):
+            canvas1.xview_scroll(1, "units")
+
+        def _on_shift_mousewheel(event):
+            delta = _get_delta(event)
+            canvas1.xview_scroll(-delta, "units")
+
+        def _bind_scrolls(e):
+            canvas1.bind_all("<MouseWheel>", _on_mousewheel)      
+            canvas1.bind_all("<Shift-MouseWheel>", _on_shift_mousewheel)
+            canvas1.bind_all("<Button-4>", _on_button4)            
+            canvas1.bind_all("<Button-5>", _on_button5)           
+            canvas1.bind_all("<Button-6>", _on_button6)            
+            canvas1.bind_all("<Button-7>", _on_button7)            
+
+        def _unbind_scrolls(e):
+            try:
+                canvas1.unbind_all("<MouseWheel>")
+                canvas1.unbind_all("<Shift-MouseWheel>")
+                canvas1.unbind_all("<Button-4>")
+                canvas1.unbind_all("<Button-5>")
+                canvas1.unbind_all("<Button-6>")
+                canvas1.unbind_all("<Button-7>")
+            except:
+                pass
+
+        canvas1.bind("<Enter>", _bind_scrolls)
+        canvas1.bind("<Leave>", _unbind_scrolls)
 
         t2 = create_tile(0, 1, "Ringkasan Stadium", accent_icon="📊")
         stadium_text = ("Stadium 0: Terlokalisir\n\n"
@@ -270,7 +341,6 @@ class ExpertSystemGUI:
         lbl = tk.Label(body, text=content, wraplength=920, justify="left", bg="#fbf7fb", font=self.normal_font)
         lbl.pack(fill=tk.X, padx=12, pady=8)
         body.pack(fill=tk.X, padx=8)
-        # start collapsed
         body.forget()
 
         def toggle():

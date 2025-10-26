@@ -110,11 +110,11 @@ class ExpertSystemGUI:
             ("Deteksi Dini", "Penting", "🔎"),
             ("Kemungkinan Jinak", "Sering", "✅"),
             ("Perlu Dokter", "Konsultasi", "🩺"),
-        ]):
+    ]):
             card = tk.Frame(stat_frame, bg=ACCENT_LIGHT if i==0 else CARD, bd=0, relief=tk.FLAT)
             card.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, padx=8)
             tk.Label(card, text=emoji + "  " + label, bg=card["bg"], font=self.normal_font, fg=TEXT).pack(anchor="w", padx=10, pady=(8,0))
-            tk.Label(card, text=value, bg=card["bg"], font=self.h2_font, fg=ACCENT if i==0 else TEXT).pack(anchor="w", padx=10, pady=(2,10))
+            tk.Label(card, text=value, bg=card["bg"], font=self.h2_font, fg=TEXT).pack(anchor="w", padx=10, pady=(2,10))
 
         tf = tk.Frame(left, bg=CARD)
         tf.pack(fill=tk.BOTH, expand=True, pady=(6,0))
@@ -264,12 +264,12 @@ class ExpertSystemGUI:
             canvas1.xview_scroll(-delta, "units")
 
         def _bind_scrolls(e):
-            canvas1.bind_all("<MouseWheel>", _on_mousewheel)      
+            canvas1.bind_all("<MouseWheel>", _on_mousewheel)
             canvas1.bind_all("<Shift-MouseWheel>", _on_shift_mousewheel)
-            canvas1.bind_all("<Button-4>", _on_button4)            
-            canvas1.bind_all("<Button-5>", _on_button5)           
-            canvas1.bind_all("<Button-6>", _on_button6)            
-            canvas1.bind_all("<Button-7>", _on_button7)            
+            canvas1.bind_all("<Button-4>", _on_button4)
+            canvas1.bind_all("<Button-5>", _on_button5)
+            canvas1.bind_all("<Button-6>", _on_button6)
+            canvas1.bind_all("<Button-7>", _on_button7)
 
         def _unbind_scrolls(e):
             try:
